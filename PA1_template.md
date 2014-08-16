@@ -8,29 +8,34 @@ Specialization, offered by Johns Hopkins Bloomberg School of Public Health. The 
 
 >This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
 
-The data is provided from this [link](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) and was downloaded and extracted to the following directory
+The data set was downloaded from this [link](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) and was extracted to the following directory:
 * ```./data/temp/repdata/``` 
 
-relative to the working directory, with the file named as
+relative to the working directory, with the file named as:
 * ```activity.csv```  
 
 The file **PA1_template.Rmd** was created and is located in that directory path. 
 
-The working environment used is 
+The working environment used is: 
 * Windows 7, Service Pack 1 (64 bit)
 * RStudio, version 0.98.978 (64 bit)
 * R version 3.1.1 (64 bit).
 
 ## Libraries
 
-Only one library was added for this assignment, which is the **ggplot2** graphics library:
+2 libraries were added for this assignment, which is the **ggplot2** graphics library and the **gridExtra** library:
 
 
 ```r
 library(ggplot2)
+library(gridExtra)
 ```
 
-All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.
+```
+## Loading required package: grid
+```
+
+All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**.
 
 ## Loading the Data
 
@@ -74,18 +79,21 @@ Note that the **date** variable was converted to a ```date``` class using ```as.
 
 ## Answering the Questions
 
-The assignment consists of 4 sections, each with question(s) to answer with exploratory data analysys, using the downloaded CSV file.
+The following consists of 4 (IV) sections, each with question(s) to answer with exploratory data analysys, using and manipulating the downloaded CSV file.
 
 ### I. What is mean total number of steps taken per day?
 
 
 ```r
 histData <- tapply(theData$steps, theData$date, FUN=mean)
+
+p1 <-
 ggplot(as.data.frame(histData), aes(histData)) + 
     geom_histogram(binwidth=10, color="black", aes(fill= ..count..)) + 
     theme_bw() + xlab("Number of Steps") + 
-    ggtitle("Total Number of Steps Each Day") + 
+    ggtitle("Total Number of Steps Each Day\nNA Values Included") + 
     theme(plot.title = element_text(face="bold"))
+p1
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
@@ -102,7 +110,7 @@ summary(histData)
 ##    0.14   30.70   37.40   37.40   46.20   73.60       8
 ```
 
-we can see that the Mean and Median values are both 37.38
+we can see that the Mean and Median values are both 37.4.
 
 ### II. What is the average daily activity pattern?
 
@@ -133,7 +141,7 @@ intAgg[intAgg$steps==max(intAgg$steps),]
 
 ### III. Missing Values
 
-In this section, we need to analyze the NA values in the data.  We can quickly see the total NA's in each variable:
+In this section, we will analyze the NA values in the data. We can quickly see the total NA's in each variable:
 
 
 ```r
@@ -184,7 +192,7 @@ nrow(theData[theData$date %in% uniqueDate & !is.na(theData$steps),])
 ## [1] 0
 ```
 
-Since the result of this analysis shows that the missing dates do not have values mixed with NA's, we will substitute all NA values with zero (0):
+Since the result of this analysis shows that the missing dates do not have values mixed with NA's, and since there is no mean or median of the missing dates to use for substitution, we will substitute all NA values with zero (0):
 
 
 ```r
@@ -197,12 +205,14 @@ Now that we have a new data set with all the NA values substituted with the valu
 
 ```r
 histData2 <- tapply(theData2$steps, theData2$date, FUN=mean)
-  
+
+p2 <-
 ggplot(as.data.frame(histData2), aes(histData2)) + 
     geom_histogram(binwidth=10, color="black", aes(fill= ..count..)) + 
     theme_bw() + xlab("Number of Steps") + 
-    ggtitle("Total Number of Steps Each Day") + 
+    ggtitle("Total Number of Steps Each Day\nNA Values Substituted With Zero (0)") + 
     theme(plot.title = element_text(face="bold"))
+p2
 ```
 
 ![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
@@ -216,7 +226,7 @@ summary(histData2)
 ##     0.0    23.5    36.1    32.5    44.5    73.6
 ```
 
-And we can see that the median value is now 36.09, and the mean value is 32.48. Now that we have analyzed the NA values and missing dates, we can answer some questions.
+We can see that the median value is now 36.1, and the mean value is 32.5. Now that we have analyzed the NA values and missing dates, we can answer some questions.
 
 
 ```r
@@ -224,6 +234,14 @@ And we can see that the median value is now 36.09, and the mean value is 32.48. 
 ```
 #### III.1. Do these values differ from the estimates from the first part of the assignment? 
 
+
+```r
+grid.arrange(p1, p2, ncol = 2, 
+             main = grid.text("Histogram Comparisons - NA Values Included vs. NA Values Substituted",
+             gp=gpar(cex=1.5, fontface="bold")))
+```
+
+![plot of chunk histograms](figure/histograms.png) 
 
 #### III.2. What is the impact of imputing missing data on the estimates of the total daily number of steps?
 

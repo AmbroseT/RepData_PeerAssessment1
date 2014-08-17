@@ -190,7 +190,7 @@ We can see that the mean and median values had changed after substituting NA val
 ```{r xtable1, echo=FALSE, results='asis'}
 ## xtable1 figure
 m <- matrix(c(37.4,37.4,36.1,32.5),nrow=2,ncol=2)
-dimnames(m) = list(c("Mean","Median"),c("Before","After"))
+dimnames(m) = list(c("Mean","Median"),c("Before NA Substitutions","After NA Substitutions"))
 
 xt <- xtable(m)
 print(xt, type="html")

@@ -244,9 +244,9 @@ We can see that the **median** value is now **36.1**, and the **mean** value is 
 We can see that the mean and median values had changed after substituting NA values:
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 14:48:16 2014 -->
+<!-- Sun Aug 17 14:57:54 2014 -->
 <TABLE border=1>
-<TR> <TH>  </TH> <TH> Before </TH> <TH> After </TH>  </TR>
+<TR> <TH>  </TH> <TH> Before NA Substitutions </TH> <TH> After NA Substitutions </TH>  </TR>
   <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>
   <TR> <TD align="right"> Median </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 32.50 </TD> </TR>
    </TABLE>
@@ -306,13 +306,13 @@ With this new data set, we can create a plot panel of time series plots for both
 
 ![plot of chunk panels](figure/panels.png) 
 
-The plot shows interesting similarities in the plot shape of ```Weekend``` compared to ```Weekday```.  We can see differences in the size of the shape between the two. This seems to indicate that the subject is performing similar activities during the weekends and the weekdays, except not in the same frequency.  At the start of the time period, there were almost no observations recorded, including the zero (o)values we substituted for NA's.
+The plot shows interesting similarities in the plot shape of ```Weekend``` compared to ```Weekday```.  We can see differences in the size of the shape between the two. This seems to indicate that the subject is performing similar activities during the weekends and the weekdays, except not in the same frequency.  At the start of the time period, there were almost no observations recorded, including the zero (o) values we substituted for NA's.
 
 ## Conclusion
 
 There is still much analysis that is needed and more data to get in order to get a better view of the subjects activities; however, from what we see so far, it is safe to conclude that the subject is performing similar activities every day, so it is possible that the activities may not be work related. It is difficult to say at what confidence level, understanding that there is a difference in frequency between ```Weekend``` and ```Weekday```, but the shape is relatively the same. And given that the maximum average of steps was around 200, the subject was most likely not doing something vigorous like walking miles for excercise. 
 
-One could also correlate the small frequency at the beginning and at the end, that these activities may have been temporary only for the months observed. Possibly, the subject had taken on some activities for the purpose of using the monitoring device for this study.  It is hard to say if the subject had done some activities at the beginning and at the end of the time period due to NA's; the device may not have been working at those times or some setting was not initially configured to collect data. Or, perhaps the subject was actually sedentary during these intervals.
+One could also correlate the small frequency at the beginning and at the end, that these activities may have been temporary only for the months observed. Possibly, the subject had taken on some activities for the purpose of using the monitoring device for this study.  It is hard to say if the subject had done some activities at the beginning and at the end of the time period due to NA's; the device may not have been working at those times or some setting was not initially configured to collect data. Or, perhaps the subject was actually sedentary during these intervals, or not wearing the monitor at all.
 
 
 ***
@@ -388,16 +388,16 @@ ggplot(y, aes(interval, steps)) + geom_line() + facet_grid(days~.) +
 ```r
 ## xtable1 figure
 m <- matrix(c(37.4,37.4,36.1,32.5),nrow=2,ncol=2)
-dimnames(m) = list(c("Mean","Median"),c("Before","After"))
+dimnames(m) = list(c("Mean","Median"),c("Before NA Substitutions","After NA Substitutions"))
 
 xt <- xtable(m)
 print(xt, type="html")
 ```
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 14:48:22 2014 -->
+<!-- Sun Aug 17 14:57:59 2014 -->
 <TABLE border=1>
-<TR> <TH>  </TH> <TH> Before </TH> <TH> After </TH>  </TR>
+<TR> <TH>  </TH> <TH> Before NA Substitutions </TH> <TH> After NA Substitutions </TH>  </TR>
   <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>
   <TR> <TD align="right"> Median </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 32.50 </TD> </TR>
    </TABLE>

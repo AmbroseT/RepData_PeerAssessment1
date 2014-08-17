@@ -27,7 +27,7 @@ Exploratory analysis will be performed on the data to see if there are any patte
 
 ## Libraries
 
-3 libraries were added for this assignment, which is the **ggplot2** graphics library and the **gridExtra** library:
+3 libraries were added for this assignment, which is the **ggplot2** graphics library, the **grid** library, and the **gridExtra** library:
 
 
 ```r
@@ -36,7 +36,7 @@ library(grid)
 library(gridExtra)
 ```
 
-All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is reguired for **gridExtra**. The R code for the plots themsleves will not be shown in the analysis; I will not inundate you with plot construction code during the analysis - I will only show the results. If you are interested, the plot codes can be found in the Appendix at the end of this section, or in the **PA1_template.Rmd** file.
+All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is required for **gridExtra**. The R code for constructing the plots in the analysis will be excluded during the analysis, and can be found in the Appendix at the end of this analysis, or in the **PA1_template.Rmd** file.
 
 ## Loading the Data
 

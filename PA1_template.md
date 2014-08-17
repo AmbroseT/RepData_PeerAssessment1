@@ -10,6 +10,10 @@ Specialization, offered by Johns Hopkins Bloomberg School of Public Health. The 
 
 >This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
 
+Exploratory analysis will be performed on the data to see if there are any patterns to discern, and if possible, if there are any stories to be told or if there are questions that can be answered.  Independent of what is found, this is an excercise in reproducible data, and the effectiveness of presenting the reader with enough information to reproduce this analysis.
+
+## Preparation
+
 The data set was downloaded from this [link](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) and was extracted to the following directory:
 * ```./data/temp/repdata/``` 
 
@@ -23,8 +27,6 @@ The working environment used is:
 * RStudio, version 0.98.978 (64 bit)
 * R version 3.1.1 (64 bit).
 
-Exploratory analysis will be performed on the data to see if there are any patterns to discern, and if possible, if there are any stories to be told.  Independent of what is found, this is an excercise in reproducible data, and the effectiveness of presenting the observer with enough information to reproduce this analysis.
-
 ## Libraries
 
 3 libraries were added for this assignment, which is the **ggplot2** graphics library, the **grid** library, and the **gridExtra** library:
@@ -36,11 +38,13 @@ library(grid)
 library(gridExtra)
 ```
 
-All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is required for **gridExtra**. The R code for constructing the plots in the analysis will be excluded during the analysis, and can be found in the Appendix at the end of this analysis, or in the **PA1_template.Rmd** file.
+All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is required for **gridExtra**. 
+
+NOTE: The R code for constructing the plots in this analysis will be excluded during the analysis, and can be found in the Appendix at the end of this analysis, or in the **PA1_template.Rmd** file.
 
 ## Loading the Data
 
-Since the data file is a CSV file, the function ```read.csv()``` was used to read the data into R.
+Since the data file is a CSV file, the function ```read.csv()``` was used to read the data into R. Once loaded, the **date** variable was converted to a ```date``` class using ```as.Date```:
 
 
 ```r
@@ -48,7 +52,7 @@ theData <- read.csv("activity.csv", sep=",")
 theData$date <- as.Date(theData$date)
 ```
 
-Once read, we can see the simple structure of the data frame:
+We can see the simple structure of the data frame, as well as the beginning and end of the data set:
 
 
 ```r
@@ -90,15 +94,20 @@ tail(theData)
 ## 17568    NA 2012-11-30     2355
 ```
 
-Note that the **date** variable was converted to a ```date``` class using ```as.Date```.
-
 Initially, from what we can see, the data records the number of steps every 5 minutes, daily, from 2012-10-01 to 2012-11-30, and there are NA's in the data set.
 
 ## Answering the Questions
 
-The following consists of 4 (IV) sections, each with question(s) to answer with exploratory data analysys, using and manipulating the data set.
+The following consists of 4 (IV) sections, each with question(s) to answer with exploratory data analysys, creating, using and manipulating data sets from the source data set.
 
 ### I. What is the mean total number of steps taken per day?
+
+We create a variable called **histData** using the ```tapply()``` function to aggregate the total average steps taken per day, then plot the histogram:
+
+
+```r
+histData <- tapply(theData$steps, theData$date, FUN=mean)
+```
 
 ![plot of chunk hist1](figure/hist1.png) 
 
@@ -114,7 +123,7 @@ summary(histData)
 ##    0.14   30.70   37.40   37.40   46.20   73.60       8
 ```
 
-we can see that the Mean and Median values are both 37.4.
+we can see that the Mean and Median values are both **37.4**.
 
 ### II. What is the average daily activity pattern?
 
@@ -142,7 +151,7 @@ intAgg[intAgg$steps==max(intAgg$steps),]
 ## 104      835 206.2
 ```
 
-We can see from this plot that there were not many steps recorded early in the time period, then suddenly man steps were taken, peaking to an average of about 206 steps at the 845th interval. The average steps decreased until it stays under 100 average steps for a awhile, then goes to around zero.
+We can see from this plot that there were not many steps recorded early in the time period, then suddenly many steps were taken, peaking to an average of about 206 steps at the 845th interval. The average steps decreased until it stays under 100 average steps for a awhile, then goes to around zero towards the end of the time interval.
 
 ### III. Missing Values
 
@@ -164,7 +173,7 @@ summary(theData)
 ##  NA's   :2304
 ```
 
-The summary shows that all NA's are in the **steps** variable, and the total is 2304.
+The summary shows that all NA's are in the **steps** variable, and the total is **2304**.
 
 In addition to NA's, we need to analyze the data to see if there are any missing days:
 
@@ -225,29 +234,43 @@ summary(histData2)
 ##     0.0    23.5    36.1    32.5    44.5    73.6
 ```
 
-We can see that the median value is now 36.1, and the mean value is 32.5. Now that we have analyzed the NA values and missing dates, we can answer some questions.
+We can see that the **median** value is now **36.1**, and the **mean** value is **32.5**. Now that we have analyzed the NA values and missing dates, we can answer some questions.
 
 #### III.1. Do these values differ from the estimates from the first part of the assignment? 
 
+We can see that the mean and median values had changed after substituting NA values:
+
+##### Before:
+- Mean = 37.4
+- Median = 37.4
+
+##### After:
+- Mean = 36.1
+- Median = 32.5
+
+#### III.2. What is the impact of inputing missing data on the estimates of the total daily number of steps?
+
+With the help of the ```library(gridExtra)``` package, we can now take the two previous histograms and compare them side-by-side. We can see that the first histogram shows a typical single peak plot, whereas the substitution created a two-peak plot:
+
+
 ![plot of chunk histograms](figure/histograms.png) 
-
-#### III.2. What is the impact of imputing missing data on the estimates of the total daily number of steps?
-
-
-
 
 ### IV. Are there differences in activity patterns between weekdays and weekends?
 
+To answer this question, we need to create a new factor variable in the data set with 2 levels - **Weekday** and **Weekend**. First, will use the ```weekdays()``` function to create the days that correspond to the date in the data, substitute each day as a weekend or weekday, then convert that variable into a factor. We can then examine the results:
+
 
 ```r
-##   1. Create a new factor variable in the dataset with two levels - "weekday" and 
-##      "weekend" indicating whether a given date is a weekday or weekend day.
+## create the days variable and cbind() to the data set
 days <- weekdays(theData2$date)
 theData2.1 <- cbind(theData2, days)
-  
+
+## substitute each day with 'weekend' or 'weekday'
 theData2.1$days <- sapply(theData2.1$days, function(i) 
     ifelse(i=="Saturday" | i=="Sunday","Weekend", "Weekday"))
-  
+
+## convert the days variable into a factor, and look at the structure
+## and summary
 theData2.1$days <- as.factor(theData2.1$days)
 str(theData2.1)
 ```
@@ -274,7 +297,21 @@ summary(theData2.1)
 ##  Max.   :806.0   Max.   :2012-11-30   Max.   :2355
 ```
 
+We can see that in this new data set, there is now a ```days``` variable, as a ```factor``` class of **Weekend** or **Weekday**.
+
+With this new data set, we can create a plot panel of time series plots for both **Weekend** and **Weekday**:
+
 ![plot of chunk panels](figure/panels.png) 
+
+The plot shows interesting similarities in the shape from the weekends compared to the weekdays.  We can see the differences in the size of the shape between the two, and some details. This seems to indicate that the subject is performing similar activities during the weekends and the weekdays, except not in the same frequency.  At the start of the time period, there were almost no observations recorded.
+
+## Conclusion
+
+There is still much analysis that is needed and more data to get in order to get a better view of the subjects activities; however, from what we see so far, it is safe to conclude that the subject is performing similar activities every day, so the activities may not be work related. It is difficult to say at what confidence level, understanding that there is a difference in frequency between weekend and weekday, but the shape is relatively the same. And given that the maximum average of steps was around 200, the subject was most likely not doing something vigorous like walking some miles for excercise. 
+
+One could also correlate the small frequency at the beginning and at the end that these activities as temporary, only for the months observed; possibly the subject had taken on some activities for the purpose of using the monitoring device for this study.  It is hard to say if the subject had done some activities at the beginning and at the end of the time period due to NA's; the device may not have been working at those times or some setting was not initially configured to collect data. Or, perhaps the subject was actually sedentary during these intervals.
+
+
 ***
 ## Appendix
 ### Plot Code References
@@ -282,8 +319,6 @@ summary(theData2.1)
 
 ```r
 ## hist1 figure
-histData <- tapply(theData$steps, theData$date, FUN=mean)
-
 p1 <-
 ggplot(as.data.frame(histData), aes(histData)) + 
     geom_histogram(binwidth=10, color="black", aes(fill= ..count..)) + 

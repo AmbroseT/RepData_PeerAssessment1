@@ -41,7 +41,7 @@ library(xtable)
 
 All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is required for **gridExtra**. **xtable** is used to convert tables into HTML format.
 
-NOTE: The R code for constructing the plots in this analysis will be excluded during the analysis. Instead, they can be found in the Appendix at the end of this analysis, or in the **PA1_template.Rmd** file.
+NOTE: The R code for constructing the plots and table in this analysis will be excluded during the analysis. Instead, they can be found in the Appendix at the end of this analysis, or in the **PA1_template.Rmd** file.
 
 ## Loading the Data
 
@@ -152,7 +152,7 @@ intAgg[intAgg$steps==max(intAgg$steps),]
 ## 104      835 206.2
 ```
 
-We can see from this plot that there were not many steps recorded early in the time period, then suddenly many steps were taken, peaking to an average of about 206 steps at the 835^th interval. The average steps decreased until it stays under 100 average steps for awhile, then goes to around zero towards the end of the time interval.
+We can see from this plot that there were not many steps recorded early in the time period, then suddenly many steps were taken, peaking to an average of about **206** steps at the 835^th interval. The average steps decreased until it stays under 100 average steps for awhile, then goes to around zero towards the end of the time interval.
 
 ### III. Missing Values
 
@@ -218,7 +218,7 @@ theData2 <- theData
 theData2$steps <- sapply(theData2$steps, function(i) ifelse(is.na(i), 0, i))
 ```
 
-Now that we have a new data set with all the NA values substituted with the value zero (0), we can re-plot the histogram using ```tapply()```, and get the new values for the Mean and Median:
+Now that we have a new data set with all the NA values substituted with the value zero (0), we can re-plot the histogram with a new variable ```histData2``` using ```tapply()```, and get the new values for the Mean and Median:
 
 
 ```r
@@ -244,7 +244,7 @@ We can see that the **median** value is now **36.1**, and the **mean** value is 
 We can see that the mean and median values had changed after substituting NA values:
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 14:29:59 2014 -->
+<!-- Sun Aug 17 14:48:16 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Before </TH> <TH> After </TH>  </TR>
   <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>
@@ -306,7 +306,7 @@ With this new data set, we can create a plot panel of time series plots for both
 
 ![plot of chunk panels](figure/panels.png) 
 
-The plot shows interesting similarities in the plot shape of ```Weekend``` compared to the ```Weekday```.  We can see the differences in the size of the shape between the two. This seems to indicate that the subject is performing similar activities during the weekends and the weekdays, except not in the same frequency.  At the start of the time period, there were almost no observations recorded, including the zero (o)values we substituted for NA's.
+The plot shows interesting similarities in the plot shape of ```Weekend``` compared to ```Weekday```.  We can see differences in the size of the shape between the two. This seems to indicate that the subject is performing similar activities during the weekends and the weekdays, except not in the same frequency.  At the start of the time period, there were almost no observations recorded, including the zero (o)values we substituted for NA's.
 
 ## Conclusion
 
@@ -395,7 +395,7 @@ print(xt, type="html")
 ```
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 14:30:04 2014 -->
+<!-- Sun Aug 17 14:48:22 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Before </TH> <TH> After </TH>  </TR>
   <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>

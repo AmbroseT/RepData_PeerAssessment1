@@ -29,18 +29,19 @@ The working environment used is:
 
 ## Libraries
 
-3 libraries were added for this assignment, which is the **ggplot2** graphics library, the **grid** library, and the **gridExtra** library:
+4 libraries were added for this assignment, which are the **ggplot2** graphics library, the **grid** library, the **gridExtra** library, and the **xtable** library:
 
 
 ```r
 library(ggplot2)
 library(grid)
 library(gridExtra)
+library(xtable)
 ```
 
-All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is required for **gridExtra**. 
+All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is required for **gridExtra**. **xtable** is used to convert tables into HTML format.
 
-NOTE: The R code for constructing the plots in this analysis will be excluded during the analysis, and can be found in the Appendix at the end of this analysis, or in the **PA1_template.Rmd** file.
+NOTE: The R code for constructing the plots in this analysis will be excluded during the analysis. Instead, they can be found in the Appendix at the end of this analysis, or in the **PA1_template.Rmd** file.
 
 ## Loading the Data
 
@@ -102,7 +103,7 @@ The following consists of 4 (IV) sections, each with question(s) to answer with 
 
 ### I. What is the mean total number of steps taken per day?
 
-We create a variable called **histData** using the ```tapply()``` function to aggregate the total average steps taken per day, then plot the histogram:
+We create a variable called ```histData``` using the ```tapply()``` function to aggregate the total average steps taken per day, then plot the histogram:
 
 
 ```r
@@ -135,7 +136,7 @@ justInt <- theData[,c(1,3)]
 intAgg <- aggregate(.~interval, data=justInt, FUN=mean)
 ```
 
-This allows us to create a time series plot, using **intAgg** as the data set and plot the average steps across all days (**steps**) over the time interval (**interval**):
+This allows us to create a time series plot, using ```intAgg``` as the data set and plot the average steps across all days (```steps```) over the time interval (```interval```). We can see the pattern in this plot:
 
 ![plot of chunk timeseries1](figure/timeseries1.png) 
 
@@ -151,7 +152,7 @@ intAgg[intAgg$steps==max(intAgg$steps),]
 ## 104      835 206.2
 ```
 
-We can see from this plot that there were not many steps recorded early in the time period, then suddenly many steps were taken, peaking to an average of about 206 steps at the 845th interval. The average steps decreased until it stays under 100 average steps for a awhile, then goes to around zero towards the end of the time interval.
+We can see from this plot that there were not many steps recorded early in the time period, then suddenly many steps were taken, peaking to an average of about 206 steps at the 835^th interval. The average steps decreased until it stays under 100 average steps for awhile, then goes to around zero towards the end of the time interval.
 
 ### III. Missing Values
 
@@ -173,19 +174,20 @@ summary(theData)
 ##  NA's   :2304
 ```
 
-The summary shows that all NA's are in the **steps** variable, and the total is **2304**.
+The summary shows that all NA's are in the ```steps``` variable, and the total is **2304**.
 
-In addition to NA's, we need to analyze the data to see if there are any missing days:
+In addition to NA's, we need to analyze the data to see if there are any missing days from aggregation. This tells us that there are NA's in those dates. We also want to make sure there are no dates with some real data mixed with NA's:
 
 
 ```r
-## using the date and steps columns to aggregate the average steps for each day. the mean for 
-## that day will be substituted for any NA's within the same day, if required.
+## using the date and steps columns to aggregate the average steps 
+## for each day. the mean for that day will be substituted for any 
+## NA's within the same day, if required.
 justDate <- theData[,1:2]
-dateAgg <- aggregate(.~ date, data=justDate, FUN=mean)
+dateAgg <- aggregate(. ~ date, data=justDate, FUN=mean)
   
-## check and see what days are missing using dateAgg. dateAgg results only days with 
-## data that can be calculated. We can then list the missing days.
+## check and see what days are missing using dateAgg. We can then 
+## list the missing days.
 noDate <- theData[!(theData$date %in% dateAgg$date),]
 uniqueDate <- unique(noDate$date)
 uniqueDate
@@ -197,9 +199,10 @@ uniqueDate
 ```
 
 ```r
-## make sure that the missing days do not have data mixed with NA.  If they do not have 
-## any data then they are all NA, which is the case after this analysis. Having no row
-## results means there are no matches.
+## make sure that the missing days do not have data mixed with NA.  
+## If they do not have any data then they are all NA, which is the 
+## case after this analysis. Having no row results means there are 
+## no matches.
 nrow(theData[theData$date %in% uniqueDate & !is.na(theData$steps),])
 ```
 
@@ -240,13 +243,13 @@ We can see that the **median** value is now **36.1**, and the **mean** value is 
 
 We can see that the mean and median values had changed after substituting NA values:
 
-##### Before:
-- Mean = 37.4
-- Median = 37.4
-
-##### After:
-- Mean = 36.1
-- Median = 32.5
+<!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
+<!-- Sun Aug 17 14:29:59 2014 -->
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> Before </TH> <TH> After </TH>  </TR>
+  <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>
+  <TR> <TD align="right"> Median </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 32.50 </TD> </TR>
+   </TABLE>
 
 #### III.2. What is the impact of inputing missing data on the estimates of the total daily number of steps?
 
@@ -303,13 +306,13 @@ With this new data set, we can create a plot panel of time series plots for both
 
 ![plot of chunk panels](figure/panels.png) 
 
-The plot shows interesting similarities in the shape from the weekends compared to the weekdays.  We can see the differences in the size of the shape between the two, and some details. This seems to indicate that the subject is performing similar activities during the weekends and the weekdays, except not in the same frequency.  At the start of the time period, there were almost no observations recorded.
+The plot shows interesting similarities in the plot shape of ```Weekend``` compared to the ```Weekday```.  We can see the differences in the size of the shape between the two. This seems to indicate that the subject is performing similar activities during the weekends and the weekdays, except not in the same frequency.  At the start of the time period, there were almost no observations recorded, including the zero (o)values we substituted for NA's.
 
 ## Conclusion
 
-There is still much analysis that is needed and more data to get in order to get a better view of the subjects activities; however, from what we see so far, it is safe to conclude that the subject is performing similar activities every day, so the activities may not be work related. It is difficult to say at what confidence level, understanding that there is a difference in frequency between weekend and weekday, but the shape is relatively the same. And given that the maximum average of steps was around 200, the subject was most likely not doing something vigorous like walking some miles for excercise. 
+There is still much analysis that is needed and more data to get in order to get a better view of the subjects activities; however, from what we see so far, it is safe to conclude that the subject is performing similar activities every day, so it is possible that the activities may not be work related. It is difficult to say at what confidence level, understanding that there is a difference in frequency between ```Weekend``` and ```Weekday```, but the shape is relatively the same. And given that the maximum average of steps was around 200, the subject was most likely not doing something vigorous like walking miles for excercise. 
 
-One could also correlate the small frequency at the beginning and at the end that these activities as temporary, only for the months observed; possibly the subject had taken on some activities for the purpose of using the monitoring device for this study.  It is hard to say if the subject had done some activities at the beginning and at the end of the time period due to NA's; the device may not have been working at those times or some setting was not initially configured to collect data. Or, perhaps the subject was actually sedentary during these intervals.
+One could also correlate the small frequency at the beginning and at the end, that these activities may have been temporary only for the months observed. Possibly, the subject had taken on some activities for the purpose of using the monitoring device for this study.  It is hard to say if the subject had done some activities at the beginning and at the end of the time period due to NA's; the device may not have been working at those times or some setting was not initially configured to collect data. Or, perhaps the subject was actually sedentary during these intervals.
 
 
 ***
@@ -379,3 +382,22 @@ ggplot(y, aes(interval, steps)) + geom_line() + facet_grid(days~.) +
 ```
 
 ![plot of chunk ref5](figure/ref5.png) 
+
+#### The xtable1 Figure:
+
+```r
+## xtable1 figure
+m <- matrix(c(37.4,37.4,36.1,32.5),nrow=2,ncol=2)
+dimnames(m) = list(c("Mean","Median"),c("Before","After"))
+
+xt <- xtable(m)
+print(xt, type="html")
+```
+
+<!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
+<!-- Sun Aug 17 14:30:04 2014 -->
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> Before </TH> <TH> After </TH>  </TR>
+  <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>
+  <TR> <TD align="right"> Median </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 32.50 </TD> </TR>
+   </TABLE>

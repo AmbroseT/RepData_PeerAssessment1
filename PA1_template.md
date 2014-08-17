@@ -1,6 +1,8 @@
-Reproducible Research - Peer Assessment 1
+REPRODUCIBLE RESEARCH - PEER ASSESSMENT 1
 =========================
 ***
+
+
 ## Summary
 
 This is the first assignment for the Reproducible Research course in the Data Science 
@@ -21,21 +23,20 @@ The working environment used is:
 * RStudio, version 0.98.978 (64 bit)
 * R version 3.1.1 (64 bit).
 
+Exploratory analysis will be performed on the data to see if there are any patterns to discern, and if possible, if there are any stories to be told.  Independent of what is found, this is an excercise in reproducible data, and the effectiveness of presenting the observer with enough information to reproduce this analysis.
+
 ## Libraries
 
-2 libraries were added for this assignment, which is the **ggplot2** graphics library and the **gridExtra** library:
+3 libraries were added for this assignment, which is the **ggplot2** graphics library and the **gridExtra** library:
 
 
 ```r
 library(ggplot2)
+library(grid)
 library(gridExtra)
 ```
 
-```
-## Loading required package: grid
-```
-
-All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**.
+All plots created in this assignment are **ggplot2** plots, consisting of histograms and time series plots.  The **gridExtra** library package allows for grid arrangement of multiple plots created with **ggplot2**, and **grid** is reguired for **gridExtra**. The R code for the plots themsleves will not be shown in the analysis; I will not inundate you with plot construction code during the analysis - I will only show the results. If you are interested, the plot codes can be found in the Appendix at the end of this section, or in the **PA1_template.Rmd** file.
 
 ## Loading the Data
 
@@ -47,7 +48,7 @@ theData <- read.csv("activity.csv", sep=",")
 theData$date <- as.Date(theData$date)
 ```
 
-Once read, you can see the simple structure of the data frame:
+Once read, we can see the simple structure of the data frame:
 
 
 ```r
@@ -75,28 +76,31 @@ head(theData)
 ## 6    NA 2012-10-01       25
 ```
 
-Note that the **date** variable was converted to a ```date``` class using ```as.Date```
+```r
+tail(theData)
+```
+
+```
+##       steps       date interval
+## 17563    NA 2012-11-30     2330
+## 17564    NA 2012-11-30     2335
+## 17565    NA 2012-11-30     2340
+## 17566    NA 2012-11-30     2345
+## 17567    NA 2012-11-30     2350
+## 17568    NA 2012-11-30     2355
+```
+
+Note that the **date** variable was converted to a ```date``` class using ```as.Date```.
+
+Initially, from what we can see, the data records the number of steps every 5 minutes, daily, from 2012-10-01 to 2012-11-30, and there are NA's in the data set.
 
 ## Answering the Questions
 
-The following consists of 4 (IV) sections, each with question(s) to answer with exploratory data analysys, using and manipulating the downloaded CSV file.
+The following consists of 4 (IV) sections, each with question(s) to answer with exploratory data analysys, using and manipulating the data set.
 
-### I. What is mean total number of steps taken per day?
+### I. What is the mean total number of steps taken per day?
 
-
-```r
-histData <- tapply(theData$steps, theData$date, FUN=mean)
-
-p1 <-
-ggplot(as.data.frame(histData), aes(histData)) + 
-    geom_histogram(binwidth=10, color="black", aes(fill= ..count..)) + 
-    theme_bw() + xlab("Number of Steps") + 
-    ggtitle("Total Number of Steps Each Day\nNA Values Included") + 
-    theme(plot.title = element_text(face="bold"))
-p1
-```
-
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
+![plot of chunk hist1](figure/hist1.png) 
 
 Next, looking at the summary of the histogram data,
 
@@ -114,18 +118,17 @@ we can see that the Mean and Median values are both 37.4.
 
 ### II. What is the average daily activity pattern?
 
+To try to answer this question, we take the interval and steps variables and aggregate the steps data by its mean:
+
 
 ```r
 justInt <- theData[,c(1,3)]
 intAgg <- aggregate(.~interval, data=justInt, FUN=mean)
-
-ggplot(intAgg, aes(interval, steps)) + geom_line() + 
-    theme_bw() + xlab("Time - 5 min Intervals") + ylab("Average Steps Across All Days") + 
-    ggtitle("Average Daily Activity Pattern") + 
-    theme(plot.title = element_text(face="bold"))
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+This allows us to create a time series plot, using **intAgg** as the data set and plot the average steps across all days (**steps**) over the time interval (**interval**):
+
+![plot of chunk timeseries1](figure/timeseries1.png) 
 
 #### II.1. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -138,6 +141,8 @@ intAgg[intAgg$steps==max(intAgg$steps),]
 ##     interval steps
 ## 104      835 206.2
 ```
+
+We can see from this plot that there were not many steps recorded early in the time period, then suddenly man steps were taken, peaking to an average of about 206 steps at the 845th interval. The average steps decreased until it stays under 100 average steps for a awhile, then goes to around zero.
 
 ### III. Missing Values
 
@@ -165,13 +170,13 @@ In addition to NA's, we need to analyze the data to see if there are any missing
 
 
 ```r
-## using the date and steps columns to aggregate the mean for each day. the mean for 
-## that day will be substituted for any NA's within the same day.
+## using the date and steps columns to aggregate the average steps for each day. the mean for 
+## that day will be substituted for any NA's within the same day, if required.
 justDate <- theData[,1:2]
 dateAgg <- aggregate(.~ date, data=justDate, FUN=mean)
   
 ## check and see what days are missing using dateAgg. dateAgg results only days with 
-## data that can be calculated.
+## data that can be calculated. We can then list the missing days.
 noDate <- theData[!(theData$date %in% dateAgg$date),]
 uniqueDate <- unique(noDate$date)
 uniqueDate
@@ -183,8 +188,9 @@ uniqueDate
 ```
 
 ```r
-## make sure that the missing dates do not have data mixed with NA.  If they do not have 
-## any data then they are all NA, which is the case.
+## make sure that the missing days do not have data mixed with NA.  If they do not have 
+## any data then they are all NA, which is the case after this analysis. Having no row
+## results means there are no matches.
 nrow(theData[theData$date %in% uniqueDate & !is.na(theData$steps),])
 ```
 
@@ -192,7 +198,7 @@ nrow(theData[theData$date %in% uniqueDate & !is.na(theData$steps),])
 ## [1] 0
 ```
 
-Since the result of this analysis shows that the missing dates do not have values mixed with NA's, and since there is no mean or median of the missing dates to use for substitution, we will substitute all NA values with zero (0):
+Since the result of this analysis shows that the missing dates do not have values mixed with NA's, and since there is no mean or median of the missing dates to use for substitution, we will substitute all NA values with zero (0), into a new data set:
 
 
 ```r
@@ -200,22 +206,15 @@ theData2 <- theData
 theData2$steps <- sapply(theData2$steps, function(i) ifelse(is.na(i), 0, i))
 ```
 
-Now that we have a new data set with all the NA values substituted with the value zero (0), we can re-plot the histogram, and get the new values for the Mean and Median:
+Now that we have a new data set with all the NA values substituted with the value zero (0), we can re-plot the histogram using ```tapply()```, and get the new values for the Mean and Median:
 
 
 ```r
 histData2 <- tapply(theData2$steps, theData2$date, FUN=mean)
-
-p2 <-
-ggplot(as.data.frame(histData2), aes(histData2)) + 
-    geom_histogram(binwidth=10, color="black", aes(fill= ..count..)) + 
-    theme_bw() + xlab("Number of Steps") + 
-    ggtitle("Total Number of Steps Each Day\nNA Values Substituted With Zero (0)") + 
-    theme(plot.title = element_text(face="bold"))
-p2
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
+![plot of chunk hist2](figure/hist2.png) 
+
 
 ```r
 summary(histData2)
@@ -228,18 +227,7 @@ summary(histData2)
 
 We can see that the median value is now 36.1, and the mean value is 32.5. Now that we have analyzed the NA values and missing dates, we can answer some questions.
 
-
-```r
-## plot side-by-side both histograms for comparison in answering the next 2 questions
-```
 #### III.1. Do these values differ from the estimates from the first part of the assignment? 
-
-
-```r
-grid.arrange(p1, p2, ncol = 2, 
-             main = grid.text("Histogram Comparisons - NA Values Included vs. NA Values Substituted",
-             gp=gpar(cex=1.5, fontface="bold")))
-```
 
 ![plot of chunk histograms](figure/histograms.png) 
 
@@ -286,13 +274,73 @@ summary(theData2.1)
 ##  Max.   :806.0   Max.   :2012-11-30   Max.   :2355
 ```
 
+![plot of chunk panels](figure/panels.png) 
+***
+## Appendix
+### Plot Code References
+#### The Hist1 Figure (histogram):
 
 ```r
+## hist1 figure
+histData <- tapply(theData$steps, theData$date, FUN=mean)
+
+p1 <-
+ggplot(as.data.frame(histData), aes(histData)) + 
+    geom_histogram(binwidth=10, color="black", aes(fill= ..count..)) + 
+    theme_bw() + xlab("Number of Steps") + 
+    ggtitle("Total Number of Steps Each Day\nNA Values Included") + 
+    theme(plot.title = element_text(face="bold"))
+p1
+```
+
+![plot of chunk ref1](figure/ref1.png) 
+
+#### The TimeSeries1 figure:
+
+```r
+## timeseries1 figure
+ggplot(intAgg, aes(interval, steps)) + geom_line() + 
+    theme_bw() + xlab("Time - 5 min Intervals") + ylab("Average Steps Across All Days") + 
+    ggtitle("Average Daily Activity Pattern") + 
+    theme(plot.title = element_text(face="bold"))
+```
+
+![plot of chunk ref2](figure/ref2.png) 
+
+#### The Hist2 figure (histogram):
+
+```r
+## hist2 figure
+p2 <-
+ggplot(as.data.frame(histData2), aes(histData2)) + 
+    geom_histogram(binwidth=10, color="black", aes(fill= ..count..)) + 
+    theme_bw() + xlab("Number of Steps") + 
+    ggtitle("Total Number of Steps Each Day\nNA Values Substituted With Zero (0)") + 
+    theme(plot.title = element_text(face="bold"))
+p2
+```
+
+![plot of chunk ref3](figure/ref3.png) 
+
+#### The Histograms figure (side by side of previous histograms):
+
+```r
+## histograms figure
+grid.arrange(p1, p2, ncol = 2, 
+             main = grid.text("Histogram Comparisons: NA Values Included vs. NA Values Substituted",
+             gp=gpar(cex=1.5, fontface="bold")))
+```
+
+![plot of chunk ref4](figure/ref4.png) 
+
+#### The Panels Figure (time series plots):
+
+```r
+## panels figure
 y <- aggregate(.~ interval + days, data=theData2.1, FUN=mean)
 
 ggplot(y, aes(interval, steps)) + geom_line() + facet_grid(days~.) +
     theme_bw() + xlab("Time - 5 min Intervals") + ylab("Average Steps Across All Days")
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
-
+![plot of chunk ref5](figure/ref5.png) 

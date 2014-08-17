@@ -230,12 +230,14 @@ summary(theData2.1)
 
 We can see that in this new data set, there is now a ```days``` variable, as a ```factor``` class of **Weekend** or **Weekday**.
 
-With this new data set, we can create a plot panel of time series plots for both **Weekend** and **Weekday**:
+With this new data set, we can create a plot panel of time series plots for both **Weekend** and **Weekday**.  We do this by using ```theData2.1``` as the data set and plot the average steps across all days (```steps```) over the time interval (```interval```) :
+
+```{r}
+y <- aggregate(.~ interval + days, data=theData2.1, FUN=mean)
+```
 
 ```{r panels, echo=FALSE}
 ## panels figure
-y <- aggregate(.~ interval + days, data=theData2.1, FUN=mean)
-
 ggplot(y, aes(interval, steps)) + geom_line() + facet_grid(days~.) +
     theme_bw() + xlab("Time - 5 min Intervals") + ylab("Average Steps Across All Days")
 ```

@@ -244,7 +244,7 @@ We can see that the **median** value is now **36.1**, and the **mean** value is 
 We can see that the mean and median values had changed after substituting NA values:
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 14:57:54 2014 -->
+<!-- Sun Aug 17 15:18:11 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Before NA Substitutions </TH> <TH> After NA Substitutions </TH>  </TR>
   <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>
@@ -302,7 +302,12 @@ summary(theData2.1)
 
 We can see that in this new data set, there is now a ```days``` variable, as a ```factor``` class of **Weekend** or **Weekday**.
 
-With this new data set, we can create a plot panel of time series plots for both **Weekend** and **Weekday**:
+With this new data set, we can create a plot panel of time series plots for both **Weekend** and **Weekday**.  We do this by using ```theData2.1``` as the data set and plot the average steps across all days (```steps```) over the time interval (```interval```) :
+
+
+```r
+y <- aggregate(.~ interval + days, data=theData2.1, FUN=mean)
+```
 
 ![plot of chunk panels](figure/panels.png) 
 
@@ -375,8 +380,6 @@ grid.arrange(p1, p2, ncol = 2,
 
 ```r
 ## panels figure
-y <- aggregate(.~ interval + days, data=theData2.1, FUN=mean)
-
 ggplot(y, aes(interval, steps)) + geom_line() + facet_grid(days~.) +
     theme_bw() + xlab("Time - 5 min Intervals") + ylab("Average Steps Across All Days")
 ```
@@ -395,7 +398,7 @@ print(xt, type="html")
 ```
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-3 package -->
-<!-- Sun Aug 17 14:57:59 2014 -->
+<!-- Sun Aug 17 15:18:17 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Before NA Substitutions </TH> <TH> After NA Substitutions </TH>  </TR>
   <TR> <TD align="right"> Mean </TD> <TD align="right"> 37.40 </TD> <TD align="right"> 36.10 </TD> </TR>
